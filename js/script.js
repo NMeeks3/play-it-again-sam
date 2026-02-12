@@ -14,7 +14,7 @@ const placeholder = function (word) {
    const placeholderLetters = [];
    for (const letter of word) {
     console.log(letter);
-   
+    placeholderLetters.push("●");  
  }
   wordInProgress.innerText = placeholderLetters.join("");
 };
@@ -26,9 +26,9 @@ guessLetterButton.addEventListener("click", function (e) {
    message.innerText = "";
 
    const newGuess = letterInput.value;
-   console.log(newGuess);
 
    const correctGuess = validateInput(newGuess);
+
    if (correctGuess)  {
     makeGuess(newGuess);
    }
@@ -43,7 +43,7 @@ const validateInput = function (input) {
     } else if (input.length > 1) {
         message.innerText = "Only one letter at a time."
     } else if (!input.match(acceptedLetter)) {
-        message.innerText = "Really? Please enter a letter A-Z."
+        message.innerText = "Really? Please enter a letter from A-Z."
     } else {
         return input;
     }
@@ -56,6 +56,40 @@ const makeGuess = function (newGuess) {
     } else {
        guessedLetters.push(newGuess);
        console.log(guessedLetters); 
+       showGuessedLetters();
+       updateWordInProgress(guessedLetters);
     }
 };
 
+const showGuessedLetters = function () {
+    guessedLettersElement.innerHTML = "";
+    for (const letter of guessedLetters) {
+        const li = document.createElement("li");
+        li.innerText = letter;
+        guessedLettersElement.append(li);
+    }
+};
+
+const updateWordInProgress = function (guessedLetters) {
+    const wordUpper = word.toUpperCase();
+    const wordArray = wordUpper.split("");
+    const showWord = [];
+    for (const letter of wordArray) {
+      if (guessedLetters.includes(letter)) {
+        showWord.push(letter.toUpperCase());
+      } else {
+        showWord.push("●")
+      }
+    }
+    wordInProgress.innerText = showWord.join("");
+    checkWin();
+    // console.log(showWord);
+    // console.log(wordArray);
+};
+
+const checkWin = function () {
+    if (word.toUpperCase() === wordInProgress.innerText) {
+      message.classList.add("win");
+      message.innerHTML = `<p class="highlight">You guessed the correct word! Congrats!</p>`;
+    }
+};
